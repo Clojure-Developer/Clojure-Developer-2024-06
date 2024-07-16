@@ -1,4 +1,6 @@
-(ns otus-02.homework.square-code)
+(ns otus-02.homework.square-code
+  (:require
+   [clojure.string :as str]))
 
 ;; Реализовать классический метод составления секретных сообщений, называемый `square code`.
 ;; Выведите закодированную версию полученного текста.
@@ -11,8 +13,8 @@
 ;; Например,
 "If man was meant to stay on the ground, god would have given us roots."
 ;; нормализуется в строку:
-"ifmanwasmeanttostayonthegroundgodwouldhavegivenusroots"
 
+(def s "ifmanwasmeanttostayonthegroundgodwouldhavegivenusroots")
 ;; Разбиваем текст в виде прямоугольника.
 ;; Размер прямоугольника (rows, cols) должен определяться длиной сообщения,
 ;; так что c >= r и c - r <= 1, где c — количество столбцов, а r — количество строк.
@@ -25,6 +27,31 @@
 "dwouldha"
 "vegivenu"
 "sroots  "
+
+(defn remove-spaces [s]
+  (apply str (remove #(= % \space) s)))
+
+(defn normalize-text [text]
+  (-> text
+      (clojure.string/replace #"\s+|\p{Punct}" "")
+      clojure.string/lower-case))
+
+(defn encode-string [input]
+  (let [s (normalize-text input)
+        n (+ 1 (int (Math/floor (Math/sqrt (double (count s))))))
+        rows (partition n n nil s)
+        transposed (map (fn [i] (map #(nth % i \space) rows)) (range n))
+        res3 (clojure.string/join " " (map (fn [elem] (apply str (map str elem))) transposed))]
+    res3))
+
+(defn decode-string [s]
+  (let [a (remove clojure.string/blank? (clojure.string/split s #" "))
+        n (count (first a))
+        transposed (map (fn [i] (map #(nth % i \space) a)) (range n))
+        res (remove-spaces (apply str (map (fn [elem] (apply str (map str elem))) transposed)))]
+    res))
+
+(decode-string "imtgdvs fearwer mayoogo anouuio ntnnlvt wttddes aohghn  sseoau ")
 
 ;; Закодированное сообщение получается путем чтения столбцов слева направо.
 ;; Сообщение выше закодировано как:
@@ -49,8 +76,3 @@
 "sseoau "
 
 
-
-(defn encode-string [input])
-
-
-(defn decode-string [input])
