@@ -1,0 +1,15 @@
+body {
+  font-size: 20px;
+}
+
+textarea {
+  font-size: 30px;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
