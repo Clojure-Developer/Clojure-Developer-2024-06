@@ -4,5 +4,5 @@
 
 
 (deftest s-expression-solution-test
-  (is (= (sut/solution) -0.2466666666666667)
+  (is (= (sut/solution) -0.24666666666666667)
       "solution function returns a correct answer"))
