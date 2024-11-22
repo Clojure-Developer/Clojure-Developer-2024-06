@@ -1,0 +1,16 @@
+{
+  "name": "n",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "iconv-lite": "^0.6.3",
+    "id3v2": "^1.0.1"
+  }
+}
