@@ -1,56 +1,41 @@
-(ns otus-02.homework.square-code)
+(ns otus-02.homework.square-code
+  (:require [otus-02.homework.lib :refer [normalize]]
+            [clojure.math :as math]
+            [clojure.string :as string]))
 
-;; Реализовать классический метод составления секретных сообщений, называемый `square code`.
-;; Выведите закодированную версию полученного текста.
-
-;; Во-первых, текст нормализуется: из текста удаляются пробелы и знаки препинания,
-;; также текст переводится в нижний регистр.
-;; Затем нормализованные символы разбиваются на строки.
-;; Эти строки можно рассматривать как образующие прямоугольник при печати их друг под другом.
-
-;; Например,
-"If man was meant to stay on the ground, god would have given us roots."
-;; нормализуется в строку:
-"ifmanwasmeanttostayonthegroundgodwouldhavegivenusroots"
-
-;; Разбиваем текст в виде прямоугольника.
-;; Размер прямоугольника (rows, cols) должен определяться длиной сообщения,
-;; так что c >= r и c - r <= 1, где c — количество столбцов, а r — количество строк.
-;; Наш нормализованный текст имеет длину 54 символа
-;; и представляет собой прямоугольник с c = 8 и r = 7:
-"ifmanwas"
-"meanttos"
-"tayonthe"
-"groundgo"
-"dwouldha"
-"vegivenu"
-"sroots  "
-
-;; Закодированное сообщение получается путем чтения столбцов слева направо.
-;; Сообщение выше закодировано как:
-"imtgdvsfearwermayoogoanouuiontnnlvtwttddesaohghnsseoau"
-
-;; Полученный закодированный текст разбиваем кусками, которые заполняют идеальные прямоугольники (r X c),
-;; с кусочками c длины r, разделенными пробелами.
-;; Для фраз, которые на n символов меньше идеального прямоугольника,
-;; дополните каждый из последних n фрагментов одним пробелом в конце.
-"imtgdvs fearwer mayoogo anouuio ntnnlvt wttddes aohghn  sseoau "
-
-;; Обратите внимание, что если бы мы сложили их,
-;; мы могли бы визуально декодировать зашифрованный текст обратно в исходное сообщение:
-
-"imtgdvs"
-"fearwer"
-"mayoogo"
-"anouuio"
-"ntnnlvt"
-"wttddes"
-"aohghn "
-"sseoau "
+(defn- get-dimensions
+  [^Integer length]
+  (let [sq (math/sqrt length)]
+    [(-> sq
+         math/ceil
+         int) (int sq)]))
 
 
+(defn encode-string
+  [^String input]
+  (let [normalized-input (normalize input)
+        input-size (count normalized-input)
+        [columns rows] (get-dimensions input-size)]
+    (->> (concat normalized-input
+                 (repeat (- (* columns rows) input-size) \space))
+         (partition columns)
+         (apply map str)
+         (string/join \space))))
 
-(defn encode-string [input])
+(defn decode-string
+  [^String input]
+  (let [input-size (count input)
+        [_ rows] (get-dimensions input-size)]
+    (->> (str input \space)
+         (partition (inc rows))
+         (map butlast)
+         (apply map str)
+         string/join
+         string/trimr)))
 
-
-(defn decode-string [input])
+(comment
+  (let
+    [source
+       "If man was meant to stay on the ground, god would have given us roots."]
+    (prn (encode-string source))
+    (prn (decode-string (encode-string source)))))
